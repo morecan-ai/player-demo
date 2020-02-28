@@ -1,0 +1,9 @@
+目前直播为 rtmp flv hls 3种
+hls目前延时最高，不建议使用
+rtmp和flv延迟差不多，建议使用
+延时 rtmp = flv < hls
+
+rtmp是flash开发的播放器，浏览器即将不支持，在网页端不建议使用
+建议使用flv
+
+由于https网站下不能加载http的资源，http和https的地址不同，举例来说： 假如返回直播地址有 hls 和 shls ，那么shls是https的地址，hls是https的地址
