@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>hls手机直播</title>
+    <title>flv手机/pc直播</title>
     <style>
       * {
         margin: 0;
@@ -31,8 +31,9 @@
       }
 
       #player {
-        width: 100%;
         display: none;
+        width: 100%;
+        background: black;
       }
     </style>
   </head>
@@ -41,31 +42,64 @@
       <div id="main">请求直播地址</div>
     </div>
 
-    <video
-      id="player"
-      preload="auto"
-      webkit-playsinline
-      playsinline
-      x-webkit-airplay
-      x5-playsinline
-      autoplay
-      controls
-    ></video>
+    <canvas id="player" width="1280" height="720"></canvas>
+    <script src="./index.js"></script>
 
     <script src="./env.js"></script>
     <script src="./axios.min.js"></script>
-    <script>
 
+    <script>
+      // 检测到播放器在当前环境可用，加载播放器
+      if (WXInlinePlayer.isSupport()) {
+        WXInlinePlayer.init({
+          asmUrl: "./prod.baseline.asm.combine.js",
+          wasmUrl: "./prod.baseline.wasm.combine.js"
+        });
+      }
+    </script>
+
+    <script>
       async function main() {
         const token = await getToken();
         await requestStartLive(token);
         const address = await getStreamingAddress(token);
+        console.log(address);
         // 此处有两种
-        // hls为http专用
-        // shls为https专用
+        // flv为http专用
+        // sflv为https专用
+
         const $video = document.getElementById("player");
-        $video.src = address.hls;
         $video.style.display = "block";
+
+        WXInlinePlayer.ready().then(() => {
+          const player = new WXInlinePlayer({
+            url: address.flv,
+            $container: document.getElementById("player"),
+            hasVideo: true,
+            hasAudio: true,
+            volume: 1.0,
+            muted: false,
+            autoplay: true,
+            loop: true,
+            isLive: true,
+            chunkSize: 128 * 1024,
+            preloadTime: 5e2,
+            bufferingTime: 1e3,
+            cacheSegmentCount: 64,
+            customLoader: null
+          });
+
+          player.play();
+
+          // const { userAgent } = navigator;
+          // const isWeChat = /MicroMessenger/i.test(userAgent);
+          // if (!isWeChat) {
+          //   alert("click to play!");
+          //   document.body.addEventListener("click", () => {
+          //     player.play();
+          //   });
+          // }
+        });
 
         document.getElementById("main").style.display = "none";
       }

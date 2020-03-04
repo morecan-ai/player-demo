@@ -1,0 +1,6 @@
+须知
+该demo兼容手机和pc，可用于微信公众号网页，pc端的网页
+ 
+来自第三方播放器 https://github.com/qiaozi-tech/WXInlinePlayer 具体参数可参考该播放器文档
+ 
+1 修改env.example.js改为env.js并填入相关的参数，在手机网页进行打开，并点击 “请求直播地址“ 按钮
