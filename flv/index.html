@@ -64,16 +64,15 @@
         await requestStartLive(token);
         const address = await getStreamingAddress(token);
         console.log(address);
-        // 此处有两种
-        // flv为http专用
-        // sflv为https专用
+        // 注意
+        // 因为浏览器安全限制 不管是http还是https 都能使用sflv
 
         const $video = document.getElementById("player");
         $video.style.display = "block";
 
         WXInlinePlayer.ready().then(() => {
           const player = new WXInlinePlayer({
-            url: address.flv,
+            url: address.sflv,
             $container: document.getElementById("player"),
             hasVideo: true,
             hasAudio: true,
