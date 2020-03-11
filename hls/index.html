@@ -58,6 +58,11 @@
 
       async function main() {
         const token = await getToken();
+        const device = await checkDevice(token);
+        if (device.is_online !== "Y") {
+          alert("当前设备不在线");
+          return;
+        }
         await requestStartLive(token);
         const address = await getStreamingAddress(token);
         // 此处有两种
@@ -132,6 +137,18 @@
           }
         }).then(function(response) {
           return response.data[DEVICE];
+        });
+      }
+
+      function checkDevice(token) {
+        return axios({
+          url: `https://api.morecanai.com/client/v1/camera/${DEVICE}/show`,
+          method: "get",
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }).then(function(response) {
+          return response.data;
         });
       }
     </script>
