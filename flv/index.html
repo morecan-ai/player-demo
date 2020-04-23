@@ -70,7 +70,7 @@
     </div>
 
     <div class="player-container" id="full-container">
-      <div class="fullscreen-btn" id="full">全屏</div>
+      <div class="fullscreen-btn" id="full">toggle</div>
       <canvas id="player" width="1280" height="720"></canvas>
     </div>
 
@@ -102,9 +102,15 @@
       //   }
       // }
       const $cont = document.getElementById("full-container");
-
+      let flag = true;
       document.getElementById("full").addEventListener("click", () => {
-        $cont.classList.add("mobilefull");
+        if (flag) {
+          $cont.classList.add("mobilefull");
+          flag = false;
+        } else {
+          $cont.classList.remove("mobilefull");
+          flag = true;
+        }
         // full($cont);
       });
 
