@@ -35,6 +35,33 @@
         width: 100%;
         background: black;
       }
+      .player-container {
+        position: relative;
+      }
+
+      .player-container.mobilefull {
+        position: relative;
+        width: 100vh;
+        height: 100vw;
+        background: red;
+        transform: rotate(90deg) translateY(-100vw);
+        transform-origin: left top;
+      }
+
+      .player-container.mobilefull #player {
+        height: 100%;
+      }
+
+      .fullscreen-btn {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        font-size: 1.2rem;
+        background: #0170fe;
+        color: #fff;
+        text-align: center;
+        padding: 0.5rem;
+      }
     </style>
   </head>
   <body>
@@ -42,7 +69,11 @@
       <div id="main">请求直播地址</div>
     </div>
 
-    <canvas id="player" width="1280" height="720"></canvas>
+    <div class="player-container" id="full-container">
+      <div class="fullscreen-btn" id="full">全屏</div>
+      <canvas id="player" width="1280" height="720"></canvas>
+    </div>
+
     <script src="./index.js"></script>
 
     <script src="./env.js"></script>
@@ -53,12 +84,30 @@
       if (WXInlinePlayer.isSupport()) {
         WXInlinePlayer.init({
           asmUrl: "./prod.baseline.asm.combine.js",
-          wasmUrl: "./prod.baseline.wasm.combine.js"
+          wasmUrl: "./prod.baseline.wasm.combine.js",
         });
       }
     </script>
 
     <script>
+      // function full(ele) {
+      //   if (ele.requestFullscreen) {
+      //     ele.requestFullscreen();
+      //   } else if (ele.mozRequestFullScreen) {
+      //     ele.mozRequestFullScreen();
+      //   } else if (ele.webkitRequestFullscreen) {
+      //     ele.webkitRequestFullscreen();
+      //   } else if (ele.msRequestFullscreen) {
+      //     ele.msRequestFullscreen();
+      //   }
+      // }
+      const $cont = document.getElementById("full-container");
+
+      document.getElementById("full").addEventListener("click", () => {
+        $cont.classList.add("mobilefull");
+        // full($cont);
+      });
+
       async function main() {
         const token = await getToken();
         const device = await checkDevice(token);
@@ -90,7 +139,7 @@
             preloadTime: 5e2,
             bufferingTime: 1e3,
             cacheSegmentCount: 64,
-            customLoader: null
+            customLoader: null,
           });
 
           player.play();
@@ -111,10 +160,10 @@
       function createFormData(values) {
         // 只2层遍历
         const formData = new FormData();
-        Object.keys(values).forEach(key => {
+        Object.keys(values).forEach((key) => {
           const dt = values[key];
           if (Array.isArray(dt)) {
-            dt.forEach(item => {
+            dt.forEach((item) => {
               formData.append(`${key}[]`, item);
             });
           } else {
@@ -134,9 +183,9 @@
           method: "post",
           data: createFormData({
             client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET
-          })
-        }).then(function(response) {
+            client_secret: CLIENT_SECRET,
+          }),
+        }).then(function (response) {
           const token = response.data.access_token;
           return token;
         });
@@ -147,13 +196,13 @@
           url: `https://api.morecanai.com/client/v1/camera/${DEVICE}/camera-message`,
           method: "post",
           data: createFormData({
-            action: "start_streaming"
+            action: "start_streaming",
           }),
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + token
-          }
-        }).then(function(response) {
+            Authorization: "Bearer " + token,
+          },
+        }).then(function (response) {
           // console.log(response);
         });
       }
@@ -163,12 +212,12 @@
           url: `https://api.morecanai.com/client/v1/camera/streaming-address`,
           method: "post",
           data: createFormData({
-            camer_serial_numbers: DEVICE
+            camer_serial_numbers: DEVICE,
           }),
           headers: {
-            Authorization: "Bearer " + token
-          }
-        }).then(function(response) {
+            Authorization: "Bearer " + token,
+          },
+        }).then(function (response) {
           return response.data[DEVICE];
         });
       }
@@ -178,9 +227,9 @@
           url: `https://api.morecanai.com/client/v1/camera/${DEVICE}/show`,
           method: "get",
           headers: {
-            Authorization: "Bearer " + token
-          }
-        }).then(function(response) {
+            Authorization: "Bearer " + token,
+          },
+        }).then(function (response) {
           return response.data;
         });
       }
