@@ -1,0 +1,6 @@
+<!--index.wxml-->
+<view class="container">
+<button bindtap="main">播放</button>
+ <live-player autoplay="true" id="player" src="{{address}}" mode="RTC" autoplay bindstatechange="statechange" binderror="error" style="width: 300px; height: 225px;" />
+ <button bindtap="fullscreen">全屏</button>
+</view>
